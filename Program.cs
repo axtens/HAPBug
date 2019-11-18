@@ -23,14 +23,16 @@ namespace HAPBug
                 Environment.Exit(2);
             }
 
+            var timeoutMins = args.Length > 1 ? int.Parse(args[1]) : 1;
+
             dynamic urllist = JsonConvert.DeserializeObject(File.ReadAllText(urlfile));
             foreach (var url in urllist)
             {
-                Test(url.Value);
+                Test(url.Value, timeoutMins);
             }
         }
 
-        private static void Test(string url)
+        private static void Test(string url, int timeoutMins)
         {
             Console.Write($"{url} ... ");
             var web = new HtmlWeb
@@ -38,7 +40,7 @@ namespace HAPBug
                 CaptureRedirect = true,
                 UseCookies = false,
                 UsingCache = false,
-                BrowserTimeout = TimeSpan.FromMinutes(1),
+                BrowserTimeout = TimeSpan.FromMinutes(timeoutMins),
                 UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36"
             };
             HtmlDocument doc;
